@@ -1,0 +1,8 @@
+fastapi
+langchain-aws
+uvicorn
+boto3
+langchain
+
+# dev dependencies
+python-dotenv
