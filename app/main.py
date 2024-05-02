@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from langchain_aws import ChatBedrock
-from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
