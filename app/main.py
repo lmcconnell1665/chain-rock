@@ -29,28 +29,24 @@ async def stream_chain(human_question: str):
         streaming=True
     )
 
-    # setup the messages
-    system_prompt = "You are a helpful assistant that loves {topic}."
-    human_template = "{text}"
-
     # format the messages as <USER> and <ASST>
-    prompt = ChatPromptTemplate.from_messages([
-        SystemMessage(content=system_prompt),
-        HumanMessage(content=human_template)
+    prompt_template = ChatPromptTemplate.from_messages([
+        ("system", "You are a helpful assistant that loves {topic} and can answer any questions related to this topic."),
+        ("human", "{text}"),
     ])
 
-    # add the needed input variables
-    prompt.format_messages(topic="OSHA", text=human_question)
-
     # create the chain
-    chain = prompt | llm | StrOutputParser()
+    chain = prompt_template | llm | StrOutputParser()
 
-    async for chunk in chain.astream({}):
+    async for chunk in chain.astream({"topic": "OSHA", "text": human_question}):
         print(chunk, end="", flush=True)
         yield chunk
-
 
 @app.post("/stream")
 async def stream_response(question: str):
     """Streaming endpoint for the LangChain chain."""
     return StreamingResponse(stream_chain(question),  media_type='text/event-stream')
+
+@app.get("/")
+def hello():
+    return {"message": "Hello from Chain"}
